@@ -7,8 +7,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.fc.runtime.Context;
 import com.aliyun.fc.runtime.StreamRequestHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +18,25 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 
 public class CloudFunction implements StreamRequestHandler {
+    public static String getExceptionAllInfo(Exception ex) {
+        ByteArrayOutputStream out = null;
+        PrintStream pout = null;
+        String ret = "";
+        try {
+            out = new ByteArrayOutputStream();
+            pout = new PrintStream(out);
+            ex.printStackTrace(pout);
+            ret = out.toString();
+            out.close();
+        } catch (Exception e) {
+            return ex.getMessage();
+        } finally {
+            if (pout != null) {
+                pout.close();
+            }
+        }
+        return ret;
+    }
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) {
@@ -35,7 +56,8 @@ public class CloudFunction implements StreamRequestHandler {
                     "url:<br>" + url + "<br><br>"
                             + "name = " + name + "<br><br>"
                             + "time = " + DateUtil.formatDateTime(new Date()) + "<br><br>"
-                            + "detailMessage:<br>" + e.getMessage()
+                            + "detailMessage:<br>" + e.getMessage() + "<br><br>"
+                            + "getExceptionAllInfo:<br>" + getExceptionAllInfo(e)
             );
             String response = HttpUtil.post("http://82.157.172.71:5025/push/sendEmail",
                     body.toJSONString());
