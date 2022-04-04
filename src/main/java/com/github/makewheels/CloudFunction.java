@@ -18,24 +18,11 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 
 public class CloudFunction implements StreamRequestHandler {
-    public static String getExceptionAllInfo(Exception ex) {
-        ByteArrayOutputStream out = null;
-        PrintStream pout = null;
-        String ret = "";
-        try {
-            out = new ByteArrayOutputStream();
-            pout = new PrintStream(out);
-            ex.printStackTrace(pout);
-            ret = out.toString();
-            out.close();
-        } catch (Exception e) {
-            return ex.getMessage();
-        } finally {
-            if (pout != null) {
-                pout.close();
-            }
-        }
-        return ret;
+    public static String getExceptionAllInfo(Exception e) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream pout = new PrintStream(out);
+        e.printStackTrace(pout);
+        return out.toString();
     }
 
     @Override
