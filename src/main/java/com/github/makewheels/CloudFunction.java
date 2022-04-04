@@ -1,6 +1,7 @@
 package com.github.makewheels;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.fc.runtime.Context;
@@ -21,7 +22,8 @@ public class CloudFunction implements StreamRequestHandler {
         String url = System.getenv("url");
         String name = System.getenv("name");
         try {
-            HttpUtil.createGet(url).timeout(10 * 1000).execute();
+            HttpResponse response = HttpUtil.createGet(url).timeout(10 * 1000).execute();
+            System.out.println("status = " + response.getStatus());
         } catch (Exception e) {
             e.printStackTrace();
             //如果发生错误，推送
